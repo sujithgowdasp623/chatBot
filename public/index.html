@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StudyBuddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --panel:#FFFFFF; --ink:#1B1D3A; --muted:#5A5D85; --line:#E4E7F3;
+  --brand:#3556D8; --brand-ink:#FFFFFF; --user:#E8EEFF; --user-ink:#1B1D3A;
+  --accent:#F5B83D; --accent-ink:#1B1D3A; --soft:#F1F4FF; --code:#F3F5FC; --tip:#FFF6DC;
+  --head:'Space Grotesk',system-ui,sans-serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#12132B; --panel:#1C1E42; --ink:#ECEDFF; --muted:#A9ACD6; --line:#34376B;
+    --brand:#8E93FF; --brand-ink:#12132B; --user:#4A50C9; --user-ink:#FFFFFF;
+    --soft:#262957; --code:#12132B; --tip:#3A3320;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+button,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:14px;background:var(--brand);color:var(--accent);display:grid;place-items:center;flex:none}
+.logo svg{width:24px;height:24px}
+.brand b{display:block;font-family:var(--head);font-size:1.3rem;line-height:1.1;color:var(--brand)}
+.brand small{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);margin-top:2px}
+.brand small i{width:8px;height:8px;border-radius:50%;background:#1F9D6B}
+.ghost{min-height:44px;background:transparent;border:1.5px solid var(--line);border-radius:14px;padding:0 16px;font-size:.88rem;font-weight:500;color:var(--ink)}
+.ghost:hover{background:var(--soft)}
+
+.subjects{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;max-width:780px;width:100%;margin:0 auto}
+.subjects::-webkit-scrollbar{display:none}
+.sub{min-height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--line);background:var(--panel);font-size:.9rem;font-weight:500;white-space:nowrap;color:var(--ink)}
+.sub:hover{background:var(--soft)}
+.sub[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
+
+main{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.col{width:100%;max-width:780px;margin:0 auto;padding:0 20px}
+
+#hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:7vh}
+#hero .logo{width:64px;height:64px;border-radius:20px;margin-bottom:18px}
+#hero .logo svg{width:36px;height:36px}
+#hero h2{font-family:var(--head);font-size:clamp(1.8rem,5vw,2.5rem);margin:0 0 8px;color:var(--brand);letter-spacing:-.02em}
+#hero p{margin:0 0 26px;color:var(--muted);max-width:440px;line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
+@media (max-width:520px){.cards{grid-template-columns:1fr}}
+.card{display:flex;align-items:center;gap:12px;text-align:left;min-height:68px;padding:12px 14px;border:1.5px solid var(--line);border-radius:16px;background:var(--panel)}
+.card:hover{border-color:var(--brand);transform:translateY(-1px)}
+.card .ic{width:40px;height:40px;flex:none;border-radius:12px;background:var(--tip);display:grid;place-items:center;font-size:1.2rem}
+.card span.t{font-size:.92rem;font-weight:500;line-height:1.35}
+
+#thread{display:flex;flex-direction:column;gap:20px;padding-top:12px;padding-bottom:24px}
+.row{display:flex;gap:10px;align-items:flex-start;font-size:1rem;line-height:1.6}
+.row.user{justify-content:flex-end}
+.row.user .content{background:var(--user);color:var(--user-ink);padding:11px 16px;border-radius:20px 20px 4px 20px;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere}
+.row.user .tag{display:block;font-size:.72rem;font-weight:600;opacity:.8;margin-bottom:2px}
+.av{width:34px;height:34px;flex:none;border-radius:12px;background:var(--brand);color:var(--accent);display:grid;place-items:center}
+.av svg{width:19px;height:19px}
+.row.bot .content{flex:1;min-width:0;max-width:calc(100% - 44px);background:var(--panel);border:1px solid var(--line);padding:12px 16px;border-radius:4px 20px 20px 20px;white-space:pre-wrap;overflow-wrap:anywhere}
+.content pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow-x:auto;margin:10px 0;white-space:pre;font-size:.85rem;line-height:1.5}
+.content code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.content :not(pre)>code{background:var(--code);padding:2px 6px;border-radius:6px;font-size:.88em}
+.content h4{display:block;margin:6px 0 2px;font-family:var(--head);font-size:1.02rem;color:var(--brand)}
+.dots{display:inline-flex;gap:5px;padding:6px 0}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--brand);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.err{border-color:#C0392B!important}
+
+.actions{display:flex;flex-wrap:wrap;gap:8px;padding-left:44px}
+.act{min-height:44px;padding:0 16px;border:1.5px solid var(--brand);border-radius:22px;background:transparent;color:var(--brand);font-size:.88rem;font-weight:600}
+.act:hover{background:var(--brand);color:var(--brand-ink)}
+
+.composer{padding:8px 20px 14px;background:var(--bg)}
+.box{max-width:780px;margin:0 auto;background:var(--panel);border:1.5px solid var(--line);border-radius:26px;
+  padding:8px 8px 8px 20px;display:flex;align-items:flex-end;gap:10px;box-shadow:0 2px 14px rgba(43,47,119,.08)}
+.box:focus-within{border-color:var(--brand)}
+textarea{flex:1;border:0;background:transparent;resize:none;outline:0;font-size:1rem;line-height:1.5;max-height:200px;padding:10px 0}
+textarea::placeholder{color:var(--muted)}
+.send{width:46px;height:46px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.send:disabled{opacity:.35;cursor:default}
+.send svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.note{max-width:780px;margin:8px auto 0;text-align:center;font-size:.75rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){main{scroll-behavior:auto}.dots i{animation:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v15h5.5c.8 0 1.5-.7 1.5-1.5z"/></svg></div>
+    <div><b>StudyBuddy</b><small><i></i>Your AI study partner</small></div>
+  </div>
+  <button class="ghost" id="new" type="button">New chat</button>
+</header>
+
+<div class="subjects" id="subjects" role="group" aria-label="Choose a subject"></div>
+
+<main id="scroll">
+  <div class="col">
+    <section id="hero">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v15h5.5c.8 0 1.5-.7 1.5-1.5z"/></svg></div>
+      <h2>What are we studying today?</h2>
+      <p>Pick a subject, then ask a question, get a topic explained, or test yourself.</p>
+      <div class="cards" id="cards"></div>
+    </section>
+    <section id="thread" aria-live="polite"></section>
+  </div>
+</main>
+
+<div class="composer">
+  <form class="box" id="form">
+    <textarea id="input" rows="1" placeholder="Ask a study question…" aria-label="Message"></textarea>
+    <button class="send" id="send" type="submit" aria-label="Send message" disabled>
+      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+  </form>
+  <p class="note">StudyBuddy only helps with student learning. Chats aren’t saved; check important facts in your notes.</p>
+</div>
+
+<script>
+var AV='<div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v15h5.5c.8 0 1.5-.7 1.5-1.5z"/></svg></div>';
+var scrollEl=document.getElementById('scroll'),thread=document.getElementById('thread'),
+    hero=document.getElementById('hero'),form=document.getElementById('form'),
+    input=document.getElementById('input'),sendBtn=document.getElementById('send'),
+    subjectsEl=document.getElementById('subjects');
+var chatHistory=[],busy=false,subject='';
+
+var subjects=['Any subject','Math','Science','History','English','Coding'];
+var ideas=[
+  {i:'🧠',t:'Explain photosynthesis in simple words'},
+  {i:'📅',t:'Help me plan my study week'},
+  {i:'✍️',t:'Give me tips to write a better essay'},
+  {i:'📝',t:'Quiz me on a topic I pick'}
+];
+var quick=[
+  {l:'Quiz me',p:'Quiz me on this with 3 multiple-choice questions, one at a time.'},
+  {l:'Explain simpler',p:'Explain that again in simpler words, like I am new to it.'},
+  {l:'Give an example',p:'Give me a real-life example.'},
+  {l:'Make flashcards',p:'Make 5 short flashcards (Q and A) from this.'}
+];
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+// Safe formatter: escapes everything first, then adds code blocks, inline code, bold, headings and bullets.
+function fmt(s){
+  return s.split('```').map(function(p,i){
+    if(i%2){return '<pre><code>'+esc(p.replace(/^[^\n]*\n/,''))+'</code></pre>';}
+    return esc(p)
+      .replace(/^#{1,6}\s+(.+)$/gm,'<h4>$1</h4>')
+      .replace(/^\s*[-*]\s+/gm,'• ')
+      .replace(/`([^`\n]+)`/g,'<code>$1</code>')
+      .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+  }).join('');
+}
+function clearActions(){var a=thread.querySelector('.actions');if(a)a.remove();}
+function addRow(who,html,isText,tag){
+  var r=document.createElement('div');r.className='row '+who;
+  var c=document.createElement('div');c.className='content';
+  if(tag){var t=document.createElement('span');t.className='tag';t.textContent=tag;c.appendChild(t);}
+  if(isText)c.appendChild(document.createTextNode(html));else c.innerHTML=html;
+  if(who==='bot')r.innerHTML=AV;
+  r.appendChild(c);thread.appendChild(r);
+  scrollEl.scrollTop=scrollEl.scrollHeight;return c;
+}
+function addActions(){
+  clearActions();
+  var d=document.createElement('div');d.className='actions';
+  quick.forEach(function(q){
+    var b=document.createElement('button');b.type='button';b.className='act';b.textContent=q.l;
+    b.onclick=function(){send(q.p);};d.appendChild(b);
+  });
+  thread.appendChild(d);scrollEl.scrollTop=scrollEl.scrollHeight;
+}
+async function send(text){
+  text=text.trim();if(!text||busy)return;
+  busy=true;hero.style.display='none';clearActions();
+  var tag=(subject&&subject!=='Any subject')?subject:'';
+  addRow('user',text,true,tag);
+  chatHistory.push({role:'user',content:text});
+  input.value='';grow();
+  var c=addRow('bot','<span class="dots"><i></i><i></i><i></i></span>');
+  try{
+    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHistory,subject:subject})});
+    var d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Something went wrong.');
+    chatHistory.push({role:'assistant',content:d.reply});
+    c.innerHTML=fmt(d.reply);addActions();
+  }catch(e){
+    chatHistory.pop();c.classList.add('err');c.textContent='Error: '+e.message;
+  }
+  busy=false;scrollEl.scrollTop=scrollEl.scrollHeight;input.focus();
+}
+function grow(){
+  input.style.height='auto';input.style.height=Math.min(input.scrollHeight,200)+'px';
+  sendBtn.disabled=!input.value.trim();
+}
+input.addEventListener('input',grow);
+input.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(input.value);}
+});
+form.addEventListener('submit',function(e){e.preventDefault();send(input.value);});
+document.getElementById('new').onclick=function(){
+  chatHistory=[];thread.innerHTML='';hero.style.display='flex';input.value='';grow();input.focus();
+};
+subjects.forEach(function(s,i){
+  var b=document.createElement('button');b.type='button';b.className='sub';b.textContent=s;
+  b.setAttribute('aria-pressed',i===0?'true':'false');
+  if(i===0)subject=s;
+  b.onclick=function(){
+    subject=s;
+    input.placeholder=(s==='Any subject')?'Ask a study question…':'Ask a '+s+' question…';
+    [].forEach.call(subjectsEl.children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  };
+  subjectsEl.appendChild(b);
+});
+ideas.forEach(function(o){
+  var b=document.createElement('button');b.type='button';b.className='card';
+  b.innerHTML='<span class="ic" aria-hidden="true">'+o.i+'</span><span class="t"></span>';
+  b.querySelector('.t').textContent=o.t;
+  b.onclick=function(){send(o.t);};document.getElementById('cards').appendChild(b);
+});
+input.focus();
+</script>
+</body>
+</html>
